@@ -4,12 +4,13 @@ package ct414;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class ExamPaper implements Assessment {
     private Date closeDate;
-    private List<Question> questions;
+    private List<Question> questions = new ArrayList<>();
     private String info;
     private int studentid;
     public ExamPaper(String closeDate,String info,int studentid){
@@ -34,8 +35,6 @@ public class ExamPaper implements Assessment {
 
     @Override
     public List<Question> getQuestions() {
-        ExamQuestion e = new ExamQuestion(0,"k", null, 0);
-        questions.add(e);
         return this.questions;
     }
     public void addQuestion(ExamQuestion q){

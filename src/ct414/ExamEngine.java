@@ -10,7 +10,8 @@ import java.util.Date;
 import java.util.List;
 
 public class ExamEngine implements ExamServer {
-    ArrayList<Student> students;
+    ArrayList<Student> students = new ArrayList<>();
+    ArrayList<Assessment> assessments = new ArrayList<>();
 
     // Constructor is required
     public ExamEngine() {
@@ -64,11 +65,69 @@ public class ExamEngine implements ExamServer {
         // TBD: You need to implement this method!
     }
 
+    public void addStudent(Student s) {
+        students.add(s);
+    }
+
+    public ArrayList<Student> getStudents() {
+        return students;
+    }
+
+    public void addAssessment(Assessment a) {
+        assessments.add(a);
+    }
+
+    public ArrayList<Assessment> getAssessments() {
+        return assessments;
+    }
+
     public static void main(String[] args) {
-        Student a = new Student(14439308,"howstings","4BP1");
-        Student b = new Student(14521303,"howkeepin",,"4BP1");
-        Assessment test1 = new ExamPaper("28/02/2018","Java RMI test",14439308);
-        Assessment test2 = new ExamPaper("02/11/2018","Java RMI test",14521303);
+        ExamEngine e = new ExamEngine();
+        Student student1 = new Student(14439308,"howstings","4BP1");
+        Student student2 = new Student(14521303,"howkeepin","4BP1");
+        Student student3 = new Student(14512345,"student3","4BP1");
+
+        e.addStudent(student1);
+        e.addStudent(student2);
+        e.addStudent(student3);
+
+        ExamPaper test1 = new ExamPaper("28/02/2018","Java RMI test",14439308);
+        ExamPaper test2 = new ExamPaper("02/11/2018","Java RMI test",14521303);
+        ExamPaper test3 = new ExamPaper("14/02/2018","Java RMI test",14512345);
+
+        String[] ans1 = {"1","2","3"};
+        String[] ans2 = {"76","86","64"};
+        String[] ans3 = {"Barack Obama","Donald Trump","Hilary Clinton"};
+        String[] ans4 = {"Krakow","Warsaw","Poznan"};
+
+        ExamQuestion q1 = new ExamQuestion(1,"How many sides on a triangle", ans1,2);
+        ExamQuestion q2 = new ExamQuestion(2,"123 - 47 = ", ans2,0);
+        ExamQuestion q3 = new ExamQuestion(3,"President of the USA is?", ans3,1);
+        ExamQuestion q4 = new ExamQuestion(4,"Capital city of Poland is?", ans4,1);
+
+        test1.addQuestion(q1);
+        test1.addQuestion(q2);
+        test1.addQuestion(q3);
+
+        test2.addQuestion(q2);
+        test2.addQuestion(q3);
+        test2.addQuestion(q4);
+
+        test3.addQuestion(q1);
+        test3.addQuestion(q3);
+        test3.addQuestion(q4);
+
+        for (Student s : e.getStudents()) {
+            for (Assessment exam : e.getAssessments()) {
+                if (s.getId() == exam.getAssociatedID()) {
+                    s.addAssessment(exam);
+                }
+            }
+        }
+
+
+
+
         if (System.getSecurityManager() == null) {
             System.setSecurityManager(new SecurityManager());
         }
@@ -80,9 +139,9 @@ public class ExamEngine implements ExamServer {
             Registry registry = LocateRegistry.getRegistry();
             registry.rebind(name, stub);
             System.out.println("ExamEngine bound");
-        } catch (Exception e) {
+        } catch (Exception ex) {
             System.err.println("ExamEngine exception:");
-            e.printStackTrace();
+            ex.printStackTrace();
         }
     }
 }
