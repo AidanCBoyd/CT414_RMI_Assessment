@@ -6,6 +6,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class ExamEngine implements ExamServer {
@@ -39,6 +40,7 @@ public class ExamEngine implements ExamServer {
     public List<String> getAvailableSummary(int token, int studentid) throws
                 UnauthorizedAccess, NoMatchingAssessment, RemoteException {
 
+
         // TBD: You need to implement this method!
         // For the moment method just returns an empty or null value to allow it to compile
 
@@ -63,6 +65,10 @@ public class ExamEngine implements ExamServer {
     }
 
     public static void main(String[] args) {
+        Student a = new Student(14439308,"howstings","4BP1");
+        Student b = new Student(14521303,"howkeepin",,"4BP1");
+        Assessment test1 = new ExamPaper("28/02/2018","Java RMI test",14439308);
+        Assessment test2 = new ExamPaper("02/11/2018","Java RMI test",14521303);
         if (System.getSecurityManager() == null) {
             System.setSecurityManager(new SecurityManager());
         }
