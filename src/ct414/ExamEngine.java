@@ -100,22 +100,28 @@ public class ExamEngine implements ExamServer {
         String[] ans3 = {"Barack Obama","Donald Trump","Hilary Clinton"};
         String[] ans4 = {"Krakow","Warsaw","Poznan"};
 
-        ExamQuestion q1 = new ExamQuestion(1,"How many sides on a triangle", ans1,2);
-        ExamQuestion q2 = new ExamQuestion(2,"123 - 47 = ", ans2,0);
-        ExamQuestion q3 = new ExamQuestion(3,"President of the USA is?", ans3,1);
-        ExamQuestion q4 = new ExamQuestion(4,"Capital city of Poland is?", ans4,1);
+        ExamQuestion q1_1 = new ExamQuestion(1,"How many sides on a triangle", ans1,2);
+        ExamQuestion q2_1 = new ExamQuestion(2,"123 - 47 = ", ans2,0);
+        ExamQuestion q3_1 = new ExamQuestion(3,"President of the USA is?", ans3,1);
+        ExamQuestion q1_2 = new ExamQuestion(4,"Capital city of Poland is?", ans4,1);
+        ExamQuestion q2_2 = q2_1;
+        ExamQuestion q3_2 = q3_1;
+        ExamQuestion q1_3 = q1_1;
+        ExamQuestion q2_3 = q3_1;
+        ExamQuestion q3_3 = q1_2;
 
-        test1.addQuestion(q1);
-        test1.addQuestion(q2);
-        test1.addQuestion(q3);
 
-        test2.addQuestion(q2);
-        test2.addQuestion(q3);
-        test2.addQuestion(q4);
+        test1.addQuestion(q1_1);
+        test1.addQuestion(q2_1);
+        test1.addQuestion(q3_1);
 
-        test3.addQuestion(q1);
-        test3.addQuestion(q3);
-        test3.addQuestion(q4);
+        test2.addQuestion(q1_2);
+        test2.addQuestion(q2_2);
+        test2.addQuestion(q3_2);
+
+        test3.addQuestion(q1_3);
+        test3.addQuestion(q2_3);
+        test3.addQuestion(q3_3);
 
         for (Student s : e.getStudents()) {
             for (Assessment exam : e.getAssessments()) {
