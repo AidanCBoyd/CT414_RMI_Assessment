@@ -5,9 +5,11 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ExamEngine implements ExamServer {
+    ArrayList<Student> students;
 
     // Constructor is required
     public ExamEngine() {
@@ -21,8 +23,16 @@ public class ExamEngine implements ExamServer {
 
 	// TBD: You need to implement this method!
 	// For the moment method just returns an empty or null value to allow it to compile
-
-	return 0;	
+        for(int i =0; i<students.size();i++){
+            if (studentid==students.get(i).getId()&&password.equals(students.get(i).getPassword())){
+                return studentid;
+            }
+            else if (studentid==students.get(i).getId()&&!(password.equals(students.get(i).getPassword()))){
+                String reason = "Incorrect Password";
+                throw new UnauthorizedAccess(reason);
+            }
+        }
+        return  0;
     }
 
     // Return a summary list of Assessments currently available for this studentid
