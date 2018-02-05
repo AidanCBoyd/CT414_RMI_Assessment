@@ -10,23 +10,75 @@ import java.util.Date;
 import java.util.List;
 
 public class ExamEngine implements ExamServer {
-    ArrayList<Student> students = new ArrayList<>();
-    ArrayList<Assessment> assessments = new ArrayList<>();
+    private ArrayList<Student> students = new ArrayList<>();
+    private ArrayList<Assessment> assessments = new ArrayList<>();
+    private ArrayList<Session> sessions = new ArrayList<>();
 
     // Constructor is required
     public ExamEngine() {
         super();
+
+
+        Student student1 = new Student(14439308,"howstings","4BP1");
+        Student student2 = new Student(14521303,"howkeepin","4BP1");
+        Student student3 = new Student(14512345,"student3","4BP1");
+
+        this.addStudent(student1);
+        this.addStudent(student2);
+        this.addStudent(student3);
+
+        ExamPaper test1 = new ExamPaper("28/02/2018","Java RMI test",14439308);
+        ExamPaper test2 = new ExamPaper("02/11/2018","Java RMI test",14521303);
+        ExamPaper test3 = new ExamPaper("14/02/2018","Java RMI test",14512345);
+
+        String[] ans1 = {"1","2","3"};
+        String[] ans2 = {"76","86","64"};
+        String[] ans3 = {"Barack Obama","Donald Trump","Hilary Clinton"};
+        String[] ans4 = {"Krakow","Warsaw","Poznan"};
+
+        ExamQuestion q1_1 = new ExamQuestion(1,"How many sides on a triangle", ans1,2);
+        ExamQuestion q2_1 = new ExamQuestion(2,"123 - 47 = ", ans2,0);
+        ExamQuestion q3_1 = new ExamQuestion(3,"President of the USA is?", ans3,1);
+        ExamQuestion q1_2 = new ExamQuestion(4,"Capital city of Poland is?", ans4,1);
+        ExamQuestion q2_2 = q2_1;
+        ExamQuestion q3_2 = q3_1;
+        ExamQuestion q1_3 = q1_1;
+        ExamQuestion q2_3 = q3_1;
+        ExamQuestion q3_3 = q1_2;
+
+
+        test1.addQuestion(q1_1);
+        test1.addQuestion(q2_1);
+        test1.addQuestion(q3_1);
+
+        test2.addQuestion(q1_2);
+        test2.addQuestion(q2_2);
+        test2.addQuestion(q3_2);
+
+        test3.addQuestion(q1_3);
+        test3.addQuestion(q2_3);
+        test3.addQuestion(q3_3);
+
+        this.addAssessment(test1);
+        this.addAssessment(test2);
+        this.addAssessment(test3);
+
+        for (Student s : this.getStudents()) {
+            for (Assessment exam : this.getAssessments()) {
+                if (s.getId() == exam.getAssociatedID()) {
+                    s.addAssessment(exam);
+                }
+            }
+        }
     }
 
     // Implement the methods defined in the ExamServer interface...
     // Return an access token that allows access to the server for some time period
-    public int login(int studentid, String password) throws 
-                UnauthorizedAccess, RemoteException {
-
-	// TBD: You need to implement this method!
-	// For the moment method just returns an empty or null value to allow it to compile
+    public int login(int studentid, String password) throws UnauthorizedAccess, RemoteException {
         for(int i =0; i<students.size();i++){
             if (studentid==students.get(i).getId()&&password.equals(students.get(i).getPassword())){
+                Session s = new Session(studentid, students.get(i));
+                sessions.add(s);
                 return studentid;
             }
             else if (studentid==students.get(i).getId()&&!(password.equals(students.get(i).getPassword()))){
@@ -82,66 +134,13 @@ public class ExamEngine implements ExamServer {
     }
 
     public static void main(String[] args) {
-        ExamEngine e = new ExamEngine();
-        Student student1 = new Student(14439308,"howstings","4BP1");
-        Student student2 = new Student(14521303,"howkeepin","4BP1");
-        Student student3 = new Student(14512345,"student3","4BP1");
-
-        e.addStudent(student1);
-        e.addStudent(student2);
-        e.addStudent(student3);
-
-        ExamPaper test1 = new ExamPaper("28/02/2018","Java RMI test",14439308);
-        ExamPaper test2 = new ExamPaper("02/11/2018","Java RMI test",14521303);
-        ExamPaper test3 = new ExamPaper("14/02/2018","Java RMI test",14512345);
-
-        String[] ans1 = {"1","2","3"};
-        String[] ans2 = {"76","86","64"};
-        String[] ans3 = {"Barack Obama","Donald Trump","Hilary Clinton"};
-        String[] ans4 = {"Krakow","Warsaw","Poznan"};
-
-        ExamQuestion q1_1 = new ExamQuestion(1,"How many sides on a triangle", ans1,2);
-        ExamQuestion q2_1 = new ExamQuestion(2,"123 - 47 = ", ans2,0);
-        ExamQuestion q3_1 = new ExamQuestion(3,"President of the USA is?", ans3,1);
-        ExamQuestion q1_2 = new ExamQuestion(4,"Capital city of Poland is?", ans4,1);
-        ExamQuestion q2_2 = q2_1;
-        ExamQuestion q3_2 = q3_1;
-        ExamQuestion q1_3 = q1_1;
-        ExamQuestion q2_3 = q3_1;
-        ExamQuestion q3_3 = q1_2;
-
-
-        test1.addQuestion(q1_1);
-        test1.addQuestion(q2_1);
-        test1.addQuestion(q3_1);
-
-        test2.addQuestion(q1_2);
-        test2.addQuestion(q2_2);
-        test2.addQuestion(q3_2);
-
-        test3.addQuestion(q1_3);
-        test3.addQuestion(q2_3);
-        test3.addQuestion(q3_3);
-
-        for (Student s : e.getStudents()) {
-            for (Assessment exam : e.getAssessments()) {
-                if (s.getId() == exam.getAssociatedID()) {
-                    s.addAssessment(exam);
-                }
-            }
-        }
-
-
-
-
         if (System.getSecurityManager() == null) {
             System.setSecurityManager(new SecurityManager());
         }
         try {
             String name = "ExamServer";
             ExamServer engine = new ExamEngine();
-            ExamServer stub =
-                (ExamServer) UnicastRemoteObject.exportObject(engine, 0);
+            ExamServer stub = (ExamServer) UnicastRemoteObject.exportObject(engine, 0);
             Registry registry = LocateRegistry.getRegistry();
             registry.rebind(name, stub);
             System.out.println("ExamEngine bound");

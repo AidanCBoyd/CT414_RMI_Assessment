@@ -9,6 +9,7 @@ public class ExamQuestion implements Question{
     private String[] ans;
     private int correct;
     private int select;
+
     public ExamQuestion(int number, String q, String[] answers,int correct) {
         this.num = number;
         this.question = q;
@@ -25,6 +26,10 @@ public class ExamQuestion implements Question{
     }
 
     public void setCorrectAnswerIndex (int i) {this.correct=i;}
+
+    public int getCorrect() {
+        return correct;
+    }
 
     public void setNum(int num) {
         this.num = num;
