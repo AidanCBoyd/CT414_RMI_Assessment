@@ -6,7 +6,7 @@ public class Student {
     private int id;
     private String password;
     private String courseCode;
-    private ArrayList<Assessment> assessments;
+    private ArrayList<Assessment> assessments = new ArrayList<>();
     public Student(int id,String password,String courseCode){
         this.id = id;
         this.password = password;

@@ -13,6 +13,8 @@ public class ExamPaper implements Assessment {
     private List<Question> questions = new ArrayList<>();
     private String info;
     private int studentid;
+    private boolean completed = false;
+
     public ExamPaper(String closeDate,String info,int studentid){
         DateFormat df = new SimpleDateFormat("dd/mm/yyyy");
         try {
@@ -96,5 +98,13 @@ public class ExamPaper implements Assessment {
     @Override
     public int getAssociatedID() {
         return this.studentid;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
+    }
+
+    public boolean isCompleted() {
+        return completed;
     }
 }

@@ -19,27 +19,27 @@ public class ExamEngine implements ExamServer {
         super();
 
 
-        Student student1 = new Student(14439308,"howstings","4BP1");
-        Student student2 = new Student(14521303,"howkeepin","4BP1");
-        Student student3 = new Student(14512345,"student3","4BP1");
+        Student student1 = new Student(14439308, "howstings", "4BP1");
+        Student student2 = new Student(14521303, "howkeepin", "4BP1");
+        Student student3 = new Student(14512345, "student3", "4BP1");
 
         this.addStudent(student1);
         this.addStudent(student2);
         this.addStudent(student3);
 
-        ExamPaper test1 = new ExamPaper("28/02/2018","Java RMI test",14439308);
-        ExamPaper test2 = new ExamPaper("02/11/2018","Java RMI test",14521303);
-        ExamPaper test3 = new ExamPaper("14/02/2018","Java RMI test",14512345);
+        ExamPaper test1 = new ExamPaper("28/02/2018", "Java RMI test", 14439308);
+        ExamPaper test2 = new ExamPaper("02/11/2018", "Java RMI test", 14521303);
+        ExamPaper test3 = new ExamPaper("14/02/2018", "Java RMI test", 14512345);
 
-        String[] ans1 = {"1","2","3"};
-        String[] ans2 = {"76","86","64"};
-        String[] ans3 = {"Barack Obama","Donald Trump","Hilary Clinton"};
-        String[] ans4 = {"Krakow","Warsaw","Poznan"};
+        String[] ans1 = {"1", "2", "3"};
+        String[] ans2 = {"76", "86", "64"};
+        String[] ans3 = {"Barack Obama", "Donald Trump", "Hilary Clinton"};
+        String[] ans4 = {"Krakow", "Warsaw", "Poznan"};
 
-        ExamQuestion q1_1 = new ExamQuestion(1,"How many sides on a triangle", ans1,2);
-        ExamQuestion q2_1 = new ExamQuestion(2,"123 - 47 = ", ans2,0);
-        ExamQuestion q3_1 = new ExamQuestion(3,"President of the USA is?", ans3,1);
-        ExamQuestion q1_2 = new ExamQuestion(4,"Capital city of Poland is?", ans4,1);
+        ExamQuestion q1_1 = new ExamQuestion(1, "How many sides on a triangle", ans1, 2);
+        ExamQuestion q2_1 = new ExamQuestion(2, "123 - 47 = ", ans2, 0);
+        ExamQuestion q3_1 = new ExamQuestion(3, "President of the USA is?", ans3, 1);
+        ExamQuestion q1_2 = new ExamQuestion(4, "Capital city of Poland is?", ans4, 1);
         ExamQuestion q2_2 = q2_1;
         ExamQuestion q3_2 = q3_1;
         ExamQuestion q1_3 = q1_1;
@@ -70,51 +70,66 @@ public class ExamEngine implements ExamServer {
                 }
             }
         }
+        System.out.println();
     }
 
     // Implement the methods defined in the ExamServer interface...
     // Return an access token that allows access to the server for some time period
     public int login(int studentid, String password) throws UnauthorizedAccess, RemoteException {
-        for(int i =0; i<students.size();i++){
-            if (studentid==students.get(i).getId()&&password.equals(students.get(i).getPassword())){
+        for (int i = 0; i < students.size(); i++) {
+            if (studentid == students.get(i).getId() && password.equals(students.get(i).getPassword())) {
                 Session s = new Session(studentid, students.get(i));
                 sessions.add(s);
                 return studentid;
-            }
-            else if (studentid==students.get(i).getId()&&!(password.equals(students.get(i).getPassword()))){
+            } else if (studentid == students.get(i).getId() && !(password.equals(students.get(i).getPassword()))) {
                 String reason = "Incorrect Password";
                 throw new UnauthorizedAccess(reason);
             }
         }
-        return  0;
+        return 0;
     }
 
     // Return a summary list of Assessments currently available for this studentid
     public List<String> getAvailableSummary(int token, int studentid) throws
-                UnauthorizedAccess, NoMatchingAssessment, RemoteException {
+            UnauthorizedAccess, NoMatchingAssessment, RemoteException {
 
 
-        // TBD: You need to implement this method!
-        // For the moment method just returns an empty or null value to allow it to compile
+        if (checkSessionActive()) {
+
+        }
 
         return null;
     }
 
     // Return an Assessment object associated with a particular course code
     public Assessment getAssessment(int token, int studentid, String courseCode) throws
-                UnauthorizedAccess, NoMatchingAssessment, RemoteException {
+            UnauthorizedAccess, NoMatchingAssessment, RemoteException {
 
-        // TBD: You need to implement this method!
-        // For the moment method just returns an empty or null value to allow it to compile
+        if(checkSessionActive()) {
+
+        }
 
         return null;
     }
 
     // Submit a completed assessment
-    public void submitAssessment(int token, int studentid, Assessment completed) throws 
-                UnauthorizedAccess, NoMatchingAssessment, RemoteException {
+    public void submitAssessment(int token, int studentid, Assessment completed) throws
+            UnauthorizedAccess, NoMatchingAssessment, RemoteException {
+        // If the session is still active
+        if (checkSessionActive()) {
+            // Make sure the assessment is still open
+            Date now = new Date();
+            Date closingDate = completed.getClosingDate();
+            long secondsBetween = (closingDate.getTime() - now.getTime()) / 1000;
 
-        // TBD: You need to implement this method!
+            if (secondsBetween > 0) {
+                // Make sure that assessment is associated with the passed in student
+                if (completed.getAssociatedID() == studentid) {
+                    // Set assessment to completed
+                    ((ExamPaper) completed).setCompleted(true);
+                }
+            }
+        }
     }
 
     public void addStudent(Student s) {
@@ -133,6 +148,17 @@ public class ExamEngine implements ExamServer {
         return assessments;
     }
 
+    private boolean checkSessionActive() throws UnauthorizedAccess{
+        for(int s = 0; s<sessions.size(); s++){
+            if(sessions.get(s).isActiveSession()) {
+                return true;
+            } else {
+                System.err.println("Your session is no longer active, please login");
+            }
+        }
+        throw new UnauthorizedAccess("You are not logged in. Log in to continue.");
+    }
+
     public static void main(String[] args) {
         if (System.getSecurityManager() == null) {
             System.setSecurityManager(new SecurityManager());
@@ -140,7 +166,7 @@ public class ExamEngine implements ExamServer {
         try {
             String name = "ExamServer";
             ExamServer engine = new ExamEngine();
-            ExamServer stub = (ExamServer) UnicastRemoteObject.exportObject(engine, 0);
+            ExamServer stub = (ExamServer) UnicastRemoteObject.exportObject(engine, 63342);
             Registry registry = LocateRegistry.getRegistry();
             registry.rebind(name, stub);
             System.out.println("ExamEngine bound");
