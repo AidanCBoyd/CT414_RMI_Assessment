@@ -17,26 +17,8 @@ public class ExamQuestion implements Question{
         this.correct=correct;
     }
 
-    public void setAns(String[] ans) {
-        this.ans = ans;
-    }
-
     public void setSelect(int select) {
         this.select = select;
-    }
-
-    public void setCorrectAnswerIndex (int i) {this.correct=i;}
-
-    public int getCorrect() {
-        return correct;
-    }
-
-    public void setNum(int num) {
-        this.num = num;
-    }
-
-    public void setQuestion(String question) {
-        this.question = question;
     }
 
     @Override
@@ -56,5 +38,13 @@ public class ExamQuestion implements Question{
 
     public int getSelected() {
         return select;
+    }
+
+    public String getCorrectAnswer() {
+        return ans[correct];
+    }
+
+    public String getSelectedAnswer() {
+        return ans[select];
     }
 }

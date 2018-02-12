@@ -1,19 +1,23 @@
 package ct414;
 
+import java.awt.print.Book;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
 public class Client {
+
     public static void main(String args[]) {
         try {
             //Set up security manager
-            if (System.getSecurityManager() == null) {
-                System.setProperty("java.security.policy", "java.policy");
-                System.setSecurityManager(new SecurityManager());
-            }
+//            if (System.getSecurityManager() == null) {
+//                System.setProperty("java.security.policy", "java.policy");
+//                System.setSecurityManager(new SecurityManager());
+//            }
             //Setting up registry and server
             String name = "ExamServer";
             Registry registry = LocateRegistry.getRegistry("localhost");
@@ -28,12 +32,12 @@ public class Client {
             int token = 0;
 
             //Logging in
-                int userid=Integer.parseInt(username);
-                System.out.println("Enter Username");
-                username = in.nextLine();
-                System.out.println("Enter Password");
-                String password = in.nextLine();
-                token = exam.login(userid, password);
+            System.out.println("Enter Username");
+            username = in.nextLine();
+            System.out.println("Enter Password");
+            String password = in.nextLine();
+            int userid=Integer.parseInt(username);
+            token = exam.login(userid, password);
 
             //Runs until user confirms session is completed (or exits due to error)
             while(!completed) {
@@ -44,7 +48,7 @@ public class Client {
                 user = a.getAssociatedID();
                 //Grades an assignment
                // gradeAssessment(exam, token, username, a);
-                System.out.println("\nWould you like to make another submission? (y/n)");
+                System.out.println("\nWould you like to make another submission or grade an assignment? (y/n)");
                 String reSubmission = in.nextLine();
                 //Checks if user is finished session
                 if(reSubmission.equals("n")) {
@@ -55,21 +59,39 @@ public class Client {
                     +"\nThanks for using the exam system");
         }
         catch (Exception e) {
-            System.err.println("MathClient exception");
-            e.printStackTrace();
+            System.err.println(e.getMessage());
         }
     }
 
     private static void displayAssignments(Scanner in, ExamServer exam, int token, int username) throws
             UnauthorizedAccess, NoMatchingAssessment, RemoteException {
         //Display available assignments for user
-        System.out.println("\nWould you like a summary of available assignments? (y/n)");
+        System.out.println("\nWould you like a summary of available assignments which you can submit or grade? (y/n)");
         String showAssignments = in.nextLine();
         if(showAssignments.equals("y")) {
             List<String> l = exam.getAvailableSummary(token, username);
             if(l == null) System.out.println("No assessments available for student: " + username
                     + "\nPlease come back later");
-            else System.out.println(l);
+            else {
+                for (String name : l) {
+                    System.out.println(name + ", ");
+                }
+            }
+            System.out.println("\nWould you like to grade an assignment? (y/n)");
+            String grade = in.nextLine();
+            if (grade.equals("y")){
+                System.out.println("\nPlease enter the name of the assessment you wish to grade:");
+                String courseCode = in.nextLine();
+                Assessment a = exam.getAssessment(token, username, courseCode);
+                System.out.println("\n"+a.getInformation());
+                Date now = new Date();
+                Date closingDate = a.getClosingDate();
+                if (now.after(closingDate)) {
+                    System.out.println(exam.gradeSubmission(a.getInformation() + "_" + username));
+                } else {
+                    System.out.println("Deadline has not passed yet. Please wait for the deadline to pass before checking grade.");
+                }
+            }
         }
         else {
             // log user out
@@ -81,10 +103,11 @@ public class Client {
     private static Assessment startAssignment(Scanner in, ExamServer exam, int token, String username) throws
             UnauthorizedAccess, NoMatchingAssessment, RemoteException, InvalidOptionNumber, InvalidQuestionNumber {
 
+        int username_int = Integer.parseInt(username);
         //Selecting and starting an assignment
         System.out.println("\nPlease enter the name of the assessment you wish to complete:");
         String courseCode = in.nextLine();
-        Assessment a = exam.getAssessment(token, Integer.parseInt(username), courseCode);
+        Assessment a = exam.getAssessment(token, username_int, courseCode);
         System.out.println("\n"+a.getInformation());
 
         System.out.println("\nWould you like to begin? (y/n)");
@@ -100,6 +123,7 @@ public class Client {
             String submit = in.nextLine();
             if(submit.equals("y")) {
                 submitted = true;
+                exam.submitAssessment(token,username_int,a);
             }
             else {
                 System.out.println("\nWould you like to redo your assessment? (y/n)");
@@ -108,7 +132,9 @@ public class Client {
                     completeAssessment(a,in);
                 }
                 //Code exits if user doesnt want to submit or re-do their assingment
-                else {System.exit(0);}
+                else {
+                    System.exit(0);
+                }
             }
         }
         return a;
@@ -119,17 +145,18 @@ public class Client {
         //Displays question with options and allows user to select an answer
         for(int i=0; i<a.getQuestions().size(); i++){
             System.out.println("____________________________________________");
-            System.out.println("\nQuestion Number "+a.getQuestion(i+1).getQuestionNumber()+":");
+            System.out.println("\nQuestion Number "+ (i+1) + ":");
             System.out.println(a.getQuestion(i+1).getQuestionDetail());
             String[] answers = a.getQuestion(i+1).getAnswerOptions();
             for (int j=0; j<answers.length;j++) {
                 System.out.println("Option "+(j+1)+": "+answers[j]);
             }
 
-            System.out.println("\nPlease select correct option for question "+a.getQuestion(i+1).getQuestionNumber()+"\n" +
+            System.out.println("\nPlease select correct option for question "+ (i+1) +"\n" +
                     "For Example: If you want to select Option one of a question you would enter 1");
-            String answer1 = in.nextLine();
-            a.selectAnswer(a.getQuestion(i+1).getQuestionNumber(),Integer.parseInt(answer1));
+            String answer = in.nextLine();
+            System.out.println((i+1) + "/" + (Integer.parseInt(answer)-1));
+            a.selectAnswer((i+1),(Integer.parseInt(answer)-1));
         }
     }
 
@@ -162,4 +189,6 @@ public class Client {
 //        System.out.println("\nOverall you scored "+(counter/results.length)*100+"%");
 //        System.out.println("____________________________________________");
 //    }
+
+
 }

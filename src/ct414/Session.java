@@ -58,23 +58,4 @@ public class Session extends TimerTask implements Serializable{
         return this.threadActive;
     }
 
-    public void terminateSession() {
-        this.threadActive = false;
-    }
-
-    public int getClientId(){
-        return this.studentID;
-    }
-
-    public int getTimeRunning(){
-        return this.timeRunning;
-    }
-
-    public long getSessionLength(){
-        return sessionLength;
-    }
-
-    public Student getStudent(){
-        return this.student;
-    }
 }

@@ -7,12 +7,14 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 public class ExamEngine implements ExamServer {
     private ArrayList<Student> students = new ArrayList<>();
     private ArrayList<Assessment> assessments = new ArrayList<>();
     private ArrayList<Session> sessions = new ArrayList<>();
+    private HashMap<String,String> graded_assignments = new HashMap<>();
 
     // Constructor is required
     public ExamEngine() {
@@ -27,9 +29,9 @@ public class ExamEngine implements ExamServer {
         this.addStudent(student2);
         this.addStudent(student3);
 
-        ExamPaper test1 = new ExamPaper("28/02/2018", "Java RMI test", 14439308);
-        ExamPaper test2 = new ExamPaper("02/11/2018", "Java RMI test", 14521303);
-        ExamPaper test3 = new ExamPaper("14/02/2018", "Java RMI test", 14512345);
+        ExamPaper test1 = new ExamPaper("28/02/2018", "Assessment Daire", 14439308);
+        ExamPaper test2 = new ExamPaper("02/09/2018", "Assessment Aidan", 14521303);
+        ExamPaper test3 = new ExamPaper("14/02/2018", "Assessment Bot", 14512345);
 
         String[] ans1 = {"1", "2", "3"};
         String[] ans2 = {"76", "86", "64"};
@@ -39,12 +41,12 @@ public class ExamEngine implements ExamServer {
         ExamQuestion q1_1 = new ExamQuestion(1, "How many sides on a triangle", ans1, 2);
         ExamQuestion q2_1 = new ExamQuestion(2, "123 - 47 = ", ans2, 0);
         ExamQuestion q3_1 = new ExamQuestion(3, "President of the USA is?", ans3, 1);
-        ExamQuestion q1_2 = new ExamQuestion(4, "Capital city of Poland is?", ans4, 1);
-        ExamQuestion q2_2 = q2_1;
-        ExamQuestion q3_2 = q3_1;
-        ExamQuestion q1_3 = q1_1;
-        ExamQuestion q2_3 = q3_1;
-        ExamQuestion q3_3 = q1_2;
+        ExamQuestion q1_2 = new ExamQuestion(1, "Capital city of Poland is?", ans4, 1);
+        ExamQuestion q2_2 = new ExamQuestion(2, "123 - 47 = ", ans2, 0);
+        ExamQuestion q3_2 = new ExamQuestion(3, "President of the USA is?", ans3, 1);
+        ExamQuestion q1_3 = new ExamQuestion(1, "How many sides on a triangle", ans1, 2);
+        ExamQuestion q2_3 = new ExamQuestion(2, "President of the USA is?", ans3, 1);
+        ExamQuestion q3_3 = new ExamQuestion(3, "Capital city of Poland is?", ans4, 1);
 
 
         test1.addQuestion(q1_1);
@@ -95,6 +97,17 @@ public class ExamEngine implements ExamServer {
 
 
         if (checkSessionActive()) {
+            for (Student s : this.getStudents()) {
+                if (s.getId() == studentid) {
+                    ArrayList<Assessment> aList = s.getAssessments();
+                    List<String> names = new ArrayList<>();
+
+                    for (Assessment a : aList) {
+                        names.add(a.getInformation());
+                    }
+                    return names;
+                }
+            }
 
         }
 
@@ -106,7 +119,11 @@ public class ExamEngine implements ExamServer {
             UnauthorizedAccess, NoMatchingAssessment, RemoteException {
 
         if(checkSessionActive()) {
-
+            for (Assessment assessment : this.getAssessments()) {
+                if (assessment.getInformation().equals(courseCode) && assessment.getAssociatedID() == studentid) {
+                    return assessment;
+                }
+            }
         }
 
         return null;
@@ -120,17 +137,63 @@ public class ExamEngine implements ExamServer {
             // Make sure the assessment is still open
             Date now = new Date();
             Date closingDate = completed.getClosingDate();
-            long secondsBetween = (closingDate.getTime() - now.getTime()) / 1000;
+            boolean before = now.before(closingDate);
 
-            if (secondsBetween > 0) {
+            if (before) {
                 // Make sure that assessment is associated with the passed in student
                 if (completed.getAssociatedID() == studentid) {
                     // Set assessment to completed
+                    System.out.println("Assessment " + completed.getInformation() + " completed.");
                     ((ExamPaper) completed).setCompleted(true);
+
+                    // Create a map of all graded assignments that the user can query to obtain result
+                    graded_assignments.put(completed.getInformation()+"_"+studentid,gradeAssignment(studentid,completed));
                 }
             }
+
         }
     }
+
+    private String gradeAssignment(int studentid, Assessment assessment) throws
+            UnauthorizedAccess, NoMatchingAssessment, RemoteException{
+
+        // If the session is still active
+        if (studentid == assessment.getAssociatedID()) {
+            int correct = 0;
+            StringBuilder result = new StringBuilder();
+            for (Question q : assessment.getQuestions()) {
+                ExamQuestion question = (ExamQuestion) q;
+                result.append("\nQuestion number: " + q.getQuestionNumber() + "\n");
+                result.append(question.getQuestionDetail() + "\n");
+                result.append("You answered: " + question.getSelectedAnswer() + "\n");
+                result.append("Correct answer: " + question.getCorrectAnswer() + "\n");
+
+                if (question.getSelectedAnswer().equals(question.getCorrectAnswer())) {
+                    result.append("You were correct!\n");
+                    correct++;
+                } else {
+                    result.append("You were incorrect!\n");
+                }
+            }
+            float score = ((float) correct) / ((float) assessment.getQuestions().size())*100;
+            result.append("You obtained " + score + "% in the assignment " + assessment.getInformation());
+            return result.toString();
+        }
+
+        return null;
+    }
+
+    @Override
+    public String gradeSubmission(String key) throws
+            UnauthorizedAccess, NoMatchingAssessment, RemoteException{
+
+        if (graded_assignments.containsKey(key)) {
+            return graded_assignments.get(key);
+        }
+        return "Assignment not graded yet. Submit assignment first.";
+    }
+
+
 
     public void addStudent(Student s) {
         students.add(s);
@@ -160,13 +223,13 @@ public class ExamEngine implements ExamServer {
     }
 
     public static void main(String[] args) {
-        if (System.getSecurityManager() == null) {
-            System.setSecurityManager(new SecurityManager());
-        }
+//        if (System.getSecurityManager() == null) {
+//            System.setSecurityManager(new SecurityManager());
+//        }
         try {
             String name = "ExamServer";
             ExamServer engine = new ExamEngine();
-            ExamServer stub = (ExamServer) UnicastRemoteObject.exportObject(engine, 63342);
+            ExamServer stub = (ExamServer) UnicastRemoteObject.exportObject(engine, 0);
             Registry registry = LocateRegistry.getRegistry();
             registry.rebind(name, stub);
             System.out.println("ExamEngine bound");

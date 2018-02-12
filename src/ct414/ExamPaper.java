@@ -16,7 +16,7 @@ public class ExamPaper implements Assessment {
     private boolean completed = false;
 
     public ExamPaper(String closeDate,String info,int studentid){
-        DateFormat df = new SimpleDateFormat("dd/mm/yyyy");
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         try {
             this.closeDate = df.parse(closeDate);
         } catch (ParseException e) {
@@ -74,7 +74,7 @@ public class ExamPaper implements Assessment {
         ExamQuestion question;
         for (Question q : questions){
             if(q.getQuestionNumber()==questionNumber){
-                question = (ExamQuestion) questions.get(questionNumber);
+                question = (ExamQuestion) questions.get((questionNumber-1));
                 question.setSelect(optionNumber);
             }
         }

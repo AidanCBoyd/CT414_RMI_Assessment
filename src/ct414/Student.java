@@ -14,28 +14,12 @@ public class Student {
 
     }
 
-    public String getCourseCode() {
-        return courseCode;
-    }
-
     public int getId() {
         return id;
     }
 
     public String getPassword() {
         return password;
-    }
-
-    public void setCourseCode(String courseCode) {
-        this.courseCode = courseCode;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public void addAssessment(Assessment a){
