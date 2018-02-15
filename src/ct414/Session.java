@@ -25,7 +25,9 @@ public class Session extends TimerTask implements Serializable{
     public Session(int id, Student s) {
         this.threadActive = true;
         Date now = new Date();
-        sessionLength = 300;
+
+        // Set session length to 15 minutes
+        sessionLength = 900;
         this.studentID = id;
         this.timeRunning = 0;
         this.student = s;

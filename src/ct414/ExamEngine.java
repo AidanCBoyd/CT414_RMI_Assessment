@@ -30,7 +30,7 @@ public class ExamEngine implements ExamServer {
         this.addStudent(student3);
 
         ExamPaper test1 = new ExamPaper("28/02/2018", "Assessment Daire", 14439308);
-        ExamPaper test2 = new ExamPaper("02/09/2018", "Assessment Aidan", 14521303);
+        ExamPaper test2 = new ExamPaper("15/02/2018", "Assessment Aidan", 14521303);
         ExamPaper test3 = new ExamPaper("14/02/2018", "Assessment Bot", 14512345);
 
         String[] ans1 = {"1", "2", "3"};
@@ -143,11 +143,10 @@ public class ExamEngine implements ExamServer {
                 // Make sure that assessment is associated with the passed in student
                 if (completed.getAssociatedID() == studentid) {
                     // Set assessment to completed
-                    System.out.println("Assessment " + completed.getInformation() + " completed.");
-                    ((ExamPaper) completed).setCompleted(true);
+                    System.out.println("Assignment " + completed.getInformation() + " completed.");
 
                     // Create a map of all graded assignments that the user can query to obtain result
-                    graded_assignments.put(completed.getInformation()+"_"+studentid,gradeAssignment(studentid,completed));
+                    graded_assignments.put(completed.getInformation()+"_"+studentid, gradeAssignment(studentid,completed));
                 }
             }
 
@@ -190,7 +189,7 @@ public class ExamEngine implements ExamServer {
         if (graded_assignments.containsKey(key)) {
             return graded_assignments.get(key);
         }
-        return "Assignment not graded yet. Submit assignment first.";
+        return "Not in Map";
     }
 
 
