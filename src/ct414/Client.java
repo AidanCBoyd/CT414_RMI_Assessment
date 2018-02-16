@@ -41,7 +41,7 @@ public class Client {
 
             //Runs until user confirms session is completed (or exits due to error)
             while(!completed) {
-                //Displays the assingment list
+                //Displays the assignment list
                 displayAssignments(in, exam, token, userid);
                 System.out.println("\nWould you like to return to the assignment list? (y/n)"); //after submission / viewing grades
                 String reSubmission = in.nextLine();
@@ -174,6 +174,7 @@ public class Client {
                     completeAssignment(a,in);
                 }
                 else {
+                    System.out.println("\nUser has been logged out");
                     System.exit(0); //session ends if user neither wants to redo or complete assignment
                 }
             }
