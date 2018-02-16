@@ -168,7 +168,7 @@ public class Client {
                 exam.submitAssessment(token,username_int,a); //calls submit assessment from server.
             }
             else { //user doesn't want to submit completed assignment
-                System.out.println("\nWould you like to resubmit your assignment? (y/n)");
+                System.out.println("\nWould you like to redo your assignment? (y/n)");
                 String redo = in.nextLine();
                 if(redo.equals("y")) {
                     completeAssignment(a,in);
