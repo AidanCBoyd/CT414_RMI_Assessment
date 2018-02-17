@@ -1,5 +1,9 @@
 package ct414;
 
+/**
+ * Implementation of the assessment interface so that extra methods can be added
+ */
+
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -41,6 +45,8 @@ public class ExamPaper implements Assessment {
     public void addQuestion(ExamQuestion q){
         this.questions.add(q);
     }
+
+
     @Override
     public Question getQuestion(int questionNumber) throws InvalidQuestionNumber {
         if (questionNumber<0){

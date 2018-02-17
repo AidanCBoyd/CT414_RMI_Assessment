@@ -23,6 +23,7 @@ public interface ExamServer extends Remote {
 	public void submitAssessment(int token, int studentid, Assessment completed) throws 
 		UnauthorizedAccess, NoMatchingAssessment, RemoteException;
 
+	// Getting the grade
 	public String gradeSubmission(String key) throws
 			UnauthorizedAccess, NoMatchingAssessment, RemoteException;
 

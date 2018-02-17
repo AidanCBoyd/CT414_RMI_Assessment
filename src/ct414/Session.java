@@ -12,7 +12,9 @@ import java.util.TimerTask;
 public class Session extends TimerTask implements Serializable{
 
     /**
+     * Creates a timer object that runs in a new thread and counts up to the 900 second max mark
      *
+     * Once the 900 second mark is reached the session will become invalid and the user will be logged out
      */
     private static final long serialVersionUID = 1L;
     private int studentID;
@@ -35,6 +37,7 @@ public class Session extends TimerTask implements Serializable{
         this.startTimer();
     }
 
+    // Start second timer
     private void startTimer() {
         this.timer.scheduleAtFixedRate(this, new Date(System.currentTimeMillis()), 1000);
     }

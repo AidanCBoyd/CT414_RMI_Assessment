@@ -1,5 +1,9 @@
 package ct414;
 
+/**
+ * Class to hold student information such as username(ID), password and associated assessments
+ */
+
 import java.util.ArrayList;
 
 public class Student {
@@ -7,6 +11,7 @@ public class Student {
     private String password;
     private String courseCode;
     private ArrayList<Assessment> assessments = new ArrayList<>();
+
     public Student(int id,String password,String courseCode){
         this.id = id;
         this.password = password;

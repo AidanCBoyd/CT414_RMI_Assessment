@@ -12,10 +12,10 @@ public class Client {
     public static void main(String args[]) {
         try {
             //Set up security manager
-//            if (System.getSecurityManager() == null) {
-//                System.setProperty("java.security.policy", "java.policy");
-//                System.setSecurityManager(new SecurityManager());
-//            }
+            if (System.getSecurityManager() == null) {
+                System.setProperty("java.security.policy", "java.policy");
+                System.setSecurityManager(new SecurityManager());
+            }
             //Setting up registry and server
             String name = "ExamServer";
             Registry registry = LocateRegistry.getRegistry("localhost");
