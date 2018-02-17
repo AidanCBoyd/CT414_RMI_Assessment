@@ -2,6 +2,9 @@ package ct414;
 
 /**
  * Implementation of the question interface to allow for extra methods to be added
+ *
+ * @author Aidan Boyd 14521303
+ * @author Daire Canavan 14439308
  */
 public class ExamQuestion implements Question{
     private int num;

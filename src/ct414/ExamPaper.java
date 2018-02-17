@@ -2,6 +2,9 @@ package ct414;
 
 /**
  * Implementation of the assessment interface so that extra methods can be added
+ *
+ * @author Aidan Boyd 14521303
+ * @author Daire Canavan 14439308
  */
 
 

@@ -1,6 +1,8 @@
-//Authors :
-//        Daire Canavan 14439308
-//        Aidan Boyd    14521303
+
+/**
+ * @author Daire Canavan 14439308
+ * @author Aidan Boyd 14521303
+ */
 
 package ct414;
 

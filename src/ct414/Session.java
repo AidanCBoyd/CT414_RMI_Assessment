@@ -1,7 +1,8 @@
 package ct414;
 
 /**
- * Created by Aidan Boyd on 05/02/18.
+ * @author Daire Canavan 14439308
+ * @author Aidan Boyd 14521303
  */
 
 import java.io.Serializable;

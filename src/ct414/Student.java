@@ -2,6 +2,9 @@ package ct414;
 
 /**
  * Class to hold student information such as username(ID), password and associated assessments
+ *
+ * @author Daire Canavan 14439308
+ * @author Aidan Boyd 14521303
  */
 
 import java.util.ArrayList;
